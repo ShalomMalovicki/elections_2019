@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './bootstrap-rtl.css';
+import './bootstrap-materia-rtl.css';
 import './icons';
 import App from './App';
 import * as serviceWorker from './serviceWorker';

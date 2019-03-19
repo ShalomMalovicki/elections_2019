@@ -9,6 +9,7 @@ import {
   NavItem,
   NavLink
 } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export class Navbar extends Component {
   state = {
@@ -35,17 +36,23 @@ export class Navbar extends Component {
           <NavbarBrand href="#">בחירות 2019</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
+            <Nav className="mr-auto" navbar>
+              <NavItem>
+                <NavLink href="#">מה אחרים בחרו</NavLink>
+              </NavItem>
+            </Nav>
             <Nav className="ml-auto" navbar>
               <NavItem>
                 <NavLink href="#" onClick={this.navLinkClick('login')}>
-                  כניסה
+                  כניסה &nbsp;
+                  <FontAwesomeIcon icon="sign-in-alt" />
                 </NavLink>
               </NavItem>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink href="#" onClick={this.navLinkClick('register')}>
                   הרשמה
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
             </Nav>
           </Collapse>
         </Container>

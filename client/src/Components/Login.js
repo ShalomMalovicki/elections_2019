@@ -57,8 +57,15 @@ const Login = props => {
           ))}
         </ModalBody>
         <ModalFooter>
+          <p className="mr-auto">
+            אין לך חשבון עדין?
+            <Button color="link" onClick={() => props.openForm('register')}>
+              הרשם כאן
+            </Button>
+          </p>
           <Button color="primary">
-            שלח <FontAwesomeIcon icon="share-square" />
+            שלח &nbsp;
+            <FontAwesomeIcon icon="share-square" />
           </Button>
         </ModalFooter>
       </RSModal>

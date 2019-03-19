@@ -65,7 +65,8 @@ const Register = props => {
         </ModalBody>
         <ModalFooter>
           <Button color="primary">
-            שלח <FontAwesomeIcon icon="share-square" />
+            שלח &nbsp;
+            <FontAwesomeIcon icon="share-square" />
           </Button>
         </ModalFooter>
       </RSModal>
