@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
 import {
   Collapse,
   Container,
@@ -10,6 +11,7 @@ import {
   NavLink
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { GET_ME } from '../queries';
 
 export class Navbar extends Component {
   state = {
@@ -61,4 +63,4 @@ export class Navbar extends Component {
   }
 }
 
-export default Navbar;
+export default graphql(GET_ME)(Navbar);

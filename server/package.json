@@ -1,0 +1,27 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "NODE_ENV=production node -r esm .",
+    "dev": "NODE_ENV=development nodemon -r esm",
+    "genkey": "ssh-keygen -t rsa -b 2048 -f jwtRS256.key",
+    "genpubkey": "openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^6.2.0",
+    "esm": "^3.2.16",
+    "graphql-yoga": "^1.17.4",
+    "jsonwebtoken": "^8.5.0",
+    "morgan": "^1.9.1",
+    "pg": "^7.8.2",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.43.0",
+    "uuid": "^3.3.2"
+  }
+}

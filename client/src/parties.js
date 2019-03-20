@@ -1,4 +1,4 @@
-export const parties = [
+export default [
   {
     name: 'הליכוד',
     value: 0

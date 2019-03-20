@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
+import ApoloClient from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
 import Navbar from './Components/Navbar';
 import Login from './Components/Login';
 import Register from './Components/Register';
 import Main from './Components/Main';
-import { parties } from './parties';
+import parties from './parties';
 import Alert from './Components/Alert';
+
+const client = new ApoloClient({
+  uri: `http://localhost:4000/graphql`
+});
 
 class App extends Component {
   state = {
@@ -97,7 +103,7 @@ class App extends Component {
 
   render() {
     return (
-      <>
+      <ApolloProvider client={client}>
         <header>
           <Navbar openForm={this.openForm} />
         </header>
@@ -110,7 +116,7 @@ class App extends Component {
           />
         </section>
         {this.state.modal.modal}
-      </>
+      </ApolloProvider>
     );
   }
 }

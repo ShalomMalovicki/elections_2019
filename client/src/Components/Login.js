@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Mutation } from 'react-apollo';
 import {
   FormGroup,
   Input,
@@ -11,8 +12,10 @@ import {
   ModalFooter
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { LOGIN } from '../queries';
+import Alert from './Alert';
 
-const login = {
+const loginConfig = {
   title: 'כניסה',
   form: [
     {
@@ -33,43 +36,109 @@ const login = {
 };
 
 const Login = props => {
+  const [form, setValues] = useState({
+    username: '',
+    password: ''
+  });
+
+  const [warning, setWarning] = useState({
+    isOpen: false,
+    message: ''
+  });
+
+  const showAlert = (isOpen, message) => {
+    setWarning({
+      isOpen,
+      message
+    });
+  };
+
+  const updateField = e => {
+    const { name, value } = e.target;
+    setValues({
+      ...form,
+      [name]: value
+    });
+  };
+
   return (
-    <form>
-      <RSModal
-        isOpen={props.isOpen}
-        toggle={props.closeModal}
-        className={props.className}
-        dir="rtl"
-      >
-        <ModalHeader toggle={props.closeModal}>{login.title}</ModalHeader>
-        <ModalBody>
-          {login.form.map((f, i) => (
-            <FormGroup key={i}>
-              <InputGroup>
-                <InputGroupAddon addonType="prepend">
-                  <span className="input-group-text" style={{ background: 'white' }}>
-                    <FontAwesomeIcon icon={f.icon} />
-                  </span>
-                </InputGroupAddon>
-                <Input type={f.type} name={f.name} placeholder={f.label} required={f.required} />
-              </InputGroup>
-            </FormGroup>
-          ))}
-        </ModalBody>
-        <ModalFooter>
-          <p className="mr-auto">
-            אין לך חשבון עדין?
-            <Button color="link" onClick={() => props.openForm('register')}>
-              הרשם כאן
+    <Mutation mutation={LOGIN}>
+      {doLogin => (
+        <RSModal
+          isOpen={props.isOpen}
+          toggle={props.closeModal}
+          className={props.className}
+          dir="rtl"
+        >
+          <ModalHeader toggle={props.closeModal}>{loginConfig.title}</ModalHeader>
+          <ModalBody>
+            {warning.isOpen ? (
+              <Alert
+                color="warning"
+                visible={true}
+                onDismiss={() => showAlert(false, '')}
+                message={warning.message}
+              />
+            ) : null}
+
+            {loginConfig.form.map((f, i) => (
+              <FormGroup key={i}>
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">
+                    <span className="input-group-text" style={{ background: 'white' }}>
+                      <FontAwesomeIcon icon={f.icon} />
+                    </span>
+                  </InputGroupAddon>
+                  <Input
+                    type={f.type}
+                    name={f.name}
+                    placeholder={f.label}
+                    required={f.required}
+                    onChange={updateField}
+                  />
+                </InputGroup>
+              </FormGroup>
+            ))}
+          </ModalBody>
+          <ModalFooter>
+            <p className="mr-auto">
+              אין לך חשבון עדין?
+              <Button color="link" onClick={() => props.openForm('register')}>
+                הרשם כאן
+              </Button>
+            </p>
+            <Button
+              color="primary"
+              onClick={async e => {
+                e.preventDefault();
+                const { username, password } = form;
+                if (username === '' || password === '') {
+                  // submissionError = 'נא להזין שם משתמש וסיסמה';
+                  // setWarning(true);
+                  showAlert(true, 'נא להזין שם משתמש וסיסמה');
+                  return;
+                }
+                try {
+                  const { data } = await doLogin({ variables: form });
+                  console.log(data);
+                } catch (err) {
+                  // submissionError = 'הפרטים שהוזנו שגויים';
+                  // setWarning(true);
+                  showAlert(true, 'הפרטים שהוזנו שגויים');
+                  return;
+                }
+
+                props.closeModal();
+                // localStorage.setItem('token', data);
+              }}
+            >
+              שלח &nbsp;
+              <FontAwesomeIcon icon="share-square" />
             </Button>
-          </p>
-          <Button color="primary">
-            שלח &nbsp;
-            <FontAwesomeIcon icon="share-square" />
-          </Button>
-        </ModalFooter>
-      </RSModal>
-    </form>
+          </ModalFooter>
+        </RSModal>
+      )}
+    </Mutation>
   );
 };
 
