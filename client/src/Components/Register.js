@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Mutation } from 'react-apollo';
 import {
   FormGroup,
   Input,
@@ -11,8 +12,10 @@ import {
   ModalFooter
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { REGISTER } from '../queries';
+import Alert from './Alert';
 
-const register = {
+const registerConfig = {
   title: 'הרשמה',
   form: [
     {
@@ -32,7 +35,7 @@ const register = {
     {
       label: 'אימות סיסמה',
       type: 'password',
-      name: 'password1',
+      name: 'confirmPassword',
       icon: 'check',
       required: true
     }
@@ -40,37 +43,99 @@ const register = {
 };
 
 const Register = props => {
+  const [form, setValues] = useState({
+    username: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const updateField = e => {
+    const { name, value } = e.target;
+    setValues({
+      ...form,
+      [name]: value
+    });
+  };
+  const [warning, setWarning] = useState({
+    isOpen: false,
+    color: '',
+    message: ''
+  });
+
+  const showAlert = (isOpen, color, message) => {
+    setWarning({
+      isOpen,
+      color,
+      message
+    });
+  };
   return (
-    <form>
-      <RSModal
-        isOpen={props.isOpen}
-        toggle={props.closeModal}
-        className={props.className}
-        dir="rtl"
-      >
-        <ModalHeader toggle={props.closeModal}>{register.title}</ModalHeader>
-        <ModalBody>
-          {register.form.map((f, i) => (
-            <FormGroup key={i}>
-              <InputGroup>
-                <InputGroupAddon addonType="prepend">
-                  <span className="input-group-text" style={{ background: 'white' }}>
-                    <FontAwesomeIcon icon={f.icon} />
-                  </span>
-                </InputGroupAddon>
-                <Input type={f.type} name={f.name} placeholder={f.label} required={f.required} />
-              </InputGroup>
-            </FormGroup>
-          ))}
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary">
-            שלח &nbsp;
-            <FontAwesomeIcon icon="share-square" />
-          </Button>
-        </ModalFooter>
-      </RSModal>
-    </form>
+    <Mutation mutation={REGISTER}>
+      {doRegistration => (
+        <RSModal
+          isOpen={props.isOpen}
+          toggle={props.closeModal}
+          className={props.className}
+          dir="rtl"
+        >
+          <ModalHeader toggle={props.closeModal}>{registerConfig.title}</ModalHeader>
+          <ModalBody>
+            {warning.isOpen && (
+              <Alert
+                color={warning.color}
+                visible={true}
+                onDismiss={() => showAlert(false, '', '')}
+                message={warning.message}
+              />
+            )}
+            {registerConfig.form.map((f, i) => (
+              <FormGroup key={i}>
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">
+                    <span className="input-group-text" style={{ background: 'white' }}>
+                      <FontAwesomeIcon icon={f.icon} />
+                    </span>
+                  </InputGroupAddon>
+                  <Input
+                    type={f.type}
+                    name={f.name}
+                    placeholder={f.label}
+                    required={f.required}
+                    onChange={updateField}
+                  />
+                </InputGroup>
+              </FormGroup>
+            ))}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="primary"
+              onClick={async e => {
+                e.preventDefault();
+                const { username, password, confirmPassword } = form;
+                if (password !== confirmPassword) {
+                  showAlert(true, 'warning', 'הסיסמות אינן תואמות');
+                }
+                try {
+                  const { data } = await doRegistration({ variables: form });
+                  if (data.register) {
+                    showAlert(true, 'success', `נרשמת בהצלחה`);
+                    await new Promise(resolve =>
+                      setTimeout(() => resolve(props.closeModal()), 3000)
+                    );
+                  }
+                } catch (err) {
+                  showAlert(true, 'warning', `המשתמש ${username} כבר קיים במערכת`);
+                }
+              }}
+            >
+              שלח &nbsp;
+              <FontAwesomeIcon icon="share-square" />
+            </Button>
+          </ModalFooter>
+        </RSModal>
+      )}
+    </Mutation>
   );
 };
 

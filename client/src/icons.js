@@ -5,9 +5,22 @@ import {
   faCheck,
   faPlus,
   faMinus,
+  faHome,
   faVoteYea,
   faShareSquare,
-  faSignInAlt
+  faSignInAlt,
+  faSignOutAlt
 } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faUser, faKey, faCheck, faPlus, faMinus, faVoteYea, faShareSquare, faSignInAlt);
+library.add(
+  faUser,
+  faKey,
+  faCheck,
+  faPlus,
+  faMinus,
+  faHome,
+  faVoteYea,
+  faShareSquare,
+  faSignInAlt,
+  faSignOutAlt
+);

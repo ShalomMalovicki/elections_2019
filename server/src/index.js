@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import db from './modules';
 import jwt from 'jsonwebtoken';
+import express from 'express';
 import { GraphQLServer } from 'graphql-yoga';
 import { HOST, PORT } from './config';
 
@@ -22,14 +23,32 @@ const typeDefs = `
     token: String
   }
 
+  type UserGuess {
+    name: String
+    value: Int
+  }
+
+  input UserGuessInput {
+    name: String
+    value: Int
+  }
+
+  type AllUsersGuesses {
+    username: String
+    userGuesses: [UserGuess]
+  }
+
   type Query {
     hello(name: String): String!
     me: User
+    getUserGuess(id: String, username: String): [UserGuess]
+    getUsersGuesses: [AllUsersGuesses]
   }
 
   type Mutation {
     register(username: String!, password: String!): [Error!]!
     login(username: String!, password: String!): Token
+    vote(userGuesses: [UserGuessInput!]!): String
   }
 `;
 
@@ -46,11 +65,28 @@ const resolvers = {
         return User.findOne({ where: { id: userId } });
       }
       return null;
+    },
+    getUserGuess: async (_, __, { db: { UserGuess }, request: { userId } }) => {
+      if (userId) {
+        const {
+          guess: { userGuesses }
+        } = await UserGuess.findOne({ where: { userId }, attributes: ['guess'] });
+        // console.log(userGuesses);
+        return userGuesses;
+      }
+      return null;
+    },
+    getUsersGuesses: async (_, __, { db: { User, UserGuess } }) => {
+      const usersGuesses = await UserGuess.findAll({ include: [User] });
+      return usersGuesses.map(({ dataValues: { user: { username }, guess: { userGuesses } } }) => {
+        return { username, userGuesses };
+      });
     }
   },
   Mutation: {
-    register: async (_, { username, password }, { db: { User } }) => {
-      await User.create({ username, password });
+    register: async (_, { username, password }, { db: { User, UserGuess } }) => {
+      const user = await User.create({ username, password });
+      await UserGuess.create({ userId: user.id });
       return [{ path: '', message: '' }];
     },
     login: async (_, { username, password }, { db: { User } }) => {
@@ -64,6 +100,15 @@ const resolvers = {
       }
       const { id } = user;
       return { token: jwt.sign({ userId: id }, privateKey, signOptions) };
+    },
+    vote: async (_, { userGuesses }, { db: { UserGuess }, request: { userId } }) => {
+      if (userId) {
+        // console.log(userGuesses);
+        const res = await UserGuess.update({ guess: { userGuesses } }, { where: { userId } });
+        console.log(res);
+        return '';
+      }
+      return null;
     }
   }
 };
@@ -92,9 +137,14 @@ const verifyUser = async req => {
     });
     server.express.use(logger('dev'));
     server.express.use(verifyUser);
+    server.express.disable('x-powered-by');
+    server.express.use(express.static(path.join(__dirname, 'client/build')));
     await server.start({
       endpoint: '/graphql',
       playground: '/graphql'
+    });
+    server.express.get('*', (_, res) => {
+      res.sendFile(path.join(__dirname + '/client/build/index.html'));
     });
     console.log(`Server is running on http://${HOST}:${PORT}`);
     console.log(`GraphQL playground is running on http://${HOST}:${PORT}/graphql`);

@@ -25,3 +25,29 @@ export const REGISTER = gql`
     }
   }
 `;
+export const GET_USER_GUESS = gql`
+  query getUserGuess($id: String, $username: String) {
+    getUserGuess(id: $id, username: $username) {
+      name
+      value
+    }
+  }
+`;
+
+export const VOTE = gql`
+  mutation vote($userGuesses: [UserGuessInput!]!) {
+    vote(userGuesses: $userGuesses)
+  }
+`;
+
+export const GET_All_USERS_GUESSES = gql`
+  query {
+    getUsersGuesses {
+      username
+      userGuesses {
+        name
+        value
+      }
+    }
+  }
+`;

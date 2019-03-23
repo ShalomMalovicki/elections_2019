@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { graphql } from 'react-apollo';
+import { NavLink } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import {
   Collapse,
   Container,
@@ -8,11 +9,9 @@ import {
   Nav,
   NavbarBrand,
   NavItem,
-  NavLink
+  NavLink as RSNavLink
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { GET_ME } from '../queries';
-
 export class Navbar extends Component {
   state = {
     isOpen: false
@@ -24,43 +23,55 @@ export class Navbar extends Component {
     });
   };
 
-  navLinkClick = action => event => {
-    event.preventDefault();
-    if (action) {
-      this.props.openForm(action);
-    }
+  logout = async () => {
+    await localStorage.removeItem('token');
+    this.props.refetch();
   };
 
   render() {
     return (
-      <RSNavbar color="primary" dark expand="md" className="mb-5">
-        <Container>
-          <NavbarBrand href="#">בחירות 2019</NavbarBrand>
-          <NavbarToggler onClick={this.toggle} />
-          <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="mr-auto" navbar>
-              <NavItem>
-                <NavLink href="#">מה אחרים בחרו</NavLink>
-              </NavItem>
-            </Nav>
-            <Nav className="ml-auto" navbar>
-              <NavItem>
-                <NavLink href="#" onClick={this.navLinkClick('login')}>
-                  כניסה &nbsp;
-                  <FontAwesomeIcon icon="sign-in-alt" />
-                </NavLink>
-              </NavItem>
-              {/* <NavItem>
-                <NavLink href="#" onClick={this.navLinkClick('register')}>
-                  הרשמה
-                </NavLink>
-              </NavItem> */}
-            </Nav>
-          </Collapse>
-        </Container>
-      </RSNavbar>
+      <header>
+        <RSNavbar color="primary" dark expand="md" className="mb-4">
+          <Container>
+            <NavbarBrand href="#">בחירות 2019</NavbarBrand>
+            <NavbarToggler onClick={this.toggle} />
+            <Collapse isOpen={this.state.isOpen} navbar>
+              <Nav className="mr-auto" navbar>
+                <NavItem>
+                  <NavLink to="/" exact className="nav-link" activeClassName="active">
+                    דף הבית &nbsp;
+                    <FontAwesomeIcon icon="home" />
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink to="/others-votes" exact className="nav-link" activeClassName="active">
+                    מה אחרים בחרו
+                  </NavLink>
+                </NavItem>
+              </Nav>
+              <Nav className="ml-auto" navbar>
+                {this.props.me ? (
+                  <NavItem>
+                    <RSNavLink href="#" onClick={this.logout}>
+                      יציאה &nbsp;
+                      <FontAwesomeIcon icon="sign-out-alt" />
+                    </RSNavLink>
+                  </NavItem>
+                ) : (
+                  <NavItem>
+                    <RSNavLink href="#" onClick={() => this.props.openForm('login')}>
+                      כניסה &nbsp;
+                      <FontAwesomeIcon icon="sign-in-alt" />
+                    </RSNavLink>
+                  </NavItem>
+                )}
+              </Nav>
+            </Collapse>
+          </Container>
+        </RSNavbar>
+      </header>
     );
   }
 }
 
-export default graphql(GET_ME)(Navbar);
+export default withRouter(Navbar);

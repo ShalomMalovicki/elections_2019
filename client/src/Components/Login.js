@@ -72,14 +72,14 @@ const Login = props => {
         >
           <ModalHeader toggle={props.closeModal}>{loginConfig.title}</ModalHeader>
           <ModalBody>
-            {warning.isOpen ? (
+            {warning.isOpen && (
               <Alert
                 color="warning"
                 visible={true}
                 onDismiss={() => showAlert(false, '')}
                 message={warning.message}
               />
-            ) : null}
+            )}
 
             {loginConfig.form.map((f, i) => (
               <FormGroup key={i}>
@@ -113,23 +113,22 @@ const Login = props => {
                 e.preventDefault();
                 const { username, password } = form;
                 if (username === '' || password === '') {
-                  // submissionError = 'נא להזין שם משתמש וסיסמה';
-                  // setWarning(true);
                   showAlert(true, 'נא להזין שם משתמש וסיסמה');
-                  return;
                 }
                 try {
-                  const { data } = await doLogin({ variables: form });
-                  console.log(data);
+                  const {
+                    data: {
+                      login: { token }
+                    }
+                  } = await doLogin({ variables: form });
+                  if (token) {
+                    await localStorage.setItem('token', token);
+                    props.refetch();
+                    props.closeModal();
+                  }
                 } catch (err) {
-                  // submissionError = 'הפרטים שהוזנו שגויים';
-                  // setWarning(true);
                   showAlert(true, 'הפרטים שהוזנו שגויים');
-                  return;
                 }
-
-                props.closeModal();
-                // localStorage.setItem('token', data);
               }}
             >
               שלח &nbsp;

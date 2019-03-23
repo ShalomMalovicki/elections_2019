@@ -1,9 +1,8 @@
 import React from 'react';
 import { Alert as RSAlert } from 'reactstrap';
 
-const Alert = ({ color, visible, onDismiss, title, message }) => (
+const Alert = ({ color, visible, onDismiss, message }) => (
   <RSAlert color={color} isOpen={visible} toggle={onDismiss}>
-    <h4>{title}</h4>
     {message}
   </RSAlert>
 );
