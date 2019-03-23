@@ -1,0 +1,56 @@
+.logo-box {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4); */
+  /* border-radius: 3px;
+  width: 150px;
+  height: 100px; */
+}
+.logo-box img {
+  position: absolute;
+  z-index: 20;
+  /* top: 20px; */
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  max-width: 80%;
+  max-height: 80%;
+  transition: all .3s;
+}
+.logo-box img {
+  -webkit-transform: scale(.80);
+  -moz-transform: scale(.80);
+  -ms-transform: scale(.80);
+  -o-transform: scale(.80);
+  transform: scale(.80);
+}
+.logo-box {
+  /* border-radius: 3px; */
+  width: 150px;
+  height: 100px;
+}
+@media screen and (min-width: 768px) {
+  .logo-box {
+      /* border-radius: 3px; */
+      width: 150px;
+      height: 100px;
+ }
+}
+@media screen and (min-width: 1024px) {
+  .logo-box {
+      /* border-radius: 3px; */
+      width: 150px;
+      height: 100px;
+ }
+}
+.logo-text {
+  margin-top: 80px;
+  font-size: 1rem;
+  text-align: center;
+}
+.party-value-selection {
+  padding-top: 30px;
+}
+
