@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import { Query, Mutation } from 'react-apollo';
-import { GET_USER_GUESS, VOTE } from '../queries';
+import { GET_USER_GUESS, VOTE, GET_All_USERS_GUESSES } from '../queries';
 import { Jumbotron, Row, Col, InputGroup, InputGroupAddon, Button, Label, Input } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../logos.css';
@@ -181,7 +181,7 @@ const Main = ({ me, openForm }) => {
                               value
                             };
                           });
-                          await vote({ variables: { userGuesses: temp } });
+                          await vote({ variables: { userGuesses: temp } , refetchQueries: [{query: GET_All_USERS_GUESSES}]});
                           showSuccess(true, 'הצבעתך נקלטה במערכת');
                         } catch (err) {
                           console.error(err);

@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import ApoloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
 import App from './App';
+import host from './host';
 
 const client = new ApoloClient({
-  uri: `http://192.168.1.17:4000/graphql`,
+  uri: `${host}/graphql`,
   request: async operation => {
     const token = await localStorage.getItem('token');
     operation.setContext({

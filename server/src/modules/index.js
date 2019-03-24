@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
-import { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_DIALECT } from '../config';
+import { IN_PRODUCTION, DEV_DB_NAME, PROD_DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_DIALECT } from '../config';
 
-const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
+const sequelize = new Sequelize(IN_PRODUCTION ? PROD_DB_NAME : DEV_DB_NAME, DB_USERNAME, DB_PASSWORD, {
   host: DB_HOST,
   dialect: DB_DIALECT,
   operatorsAliases: false,

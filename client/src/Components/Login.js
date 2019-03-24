@@ -114,6 +114,7 @@ const Login = props => {
                 const { username, password } = form;
                 if (username === '' || password === '') {
                   showAlert(true, 'נא להזין שם משתמש וסיסמה');
+                  return;
                 }
                 try {
                   const {

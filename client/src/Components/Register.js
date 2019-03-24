@@ -115,6 +115,7 @@ const Register = props => {
                 const { username, password, confirmPassword } = form;
                 if (password !== confirmPassword) {
                   showAlert(true, 'warning', 'הסיסמות אינן תואמות');
+                  return;
                 }
                 try {
                   const { data } = await doRegistration({ variables: form });

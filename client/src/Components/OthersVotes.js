@@ -4,13 +4,6 @@ import { GET_All_USERS_GUESSES } from '../queries';
 import { Bar } from 'react-chartjs-2';
 import { Container } from 'reactstrap';
 
-const randomRgb = () => {
-  const o = Math.round,
-    r = Math.random,
-    s = 255;
-  return o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s);
-};
-
 const OthersVotes = () => (
   <Query query={GET_All_USERS_GUESSES}>
     {({ loading, error, data }) => {
@@ -19,7 +12,6 @@ const OthersVotes = () => (
       return (
         <Container>
           {data.getUsersGuesses.map(({ username, userGuesses }) => {
-            // const color = randomRgb();
             const color = '255,99,132';
             return (
               <div key={`user-${username}`}>
@@ -29,7 +21,6 @@ const OthersVotes = () => (
                     labels: userGuesses.map(({ name }) => name),
                     datasets: [
                       {
-                        label: username,
                         data: userGuesses.map(({ value }) => value),
                         backgroundColor: `rgba(${color},0.2)`,
                         borderColor: `rgba(${color},1)`,
@@ -42,7 +33,10 @@ const OthersVotes = () => (
                   width={100}
                   height={100}
                   options={{
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    legend: {
+                      display: false
+                    }
                   }}
                 />
               </div>

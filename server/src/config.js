@@ -5,8 +5,9 @@ export const {
   HOST = 'localhost',
 
   NODE_ENV = 'development',
-
-  DB_NAME = 'jwt_login_db',
+  IN_PRODUCTION = NODE_ENV === 'production',
+  DEV_DB_NAME = 'elections_2019_test_db',
+  PROD_DB_NAME = 'elections_2019_db',
   DB_USERNAME = 'postgres',
   DB_PASSWORD = 'admin',
   DB_HOST = 'localhost',

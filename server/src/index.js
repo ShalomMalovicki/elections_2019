@@ -5,7 +5,7 @@ import db from './modules';
 import jwt from 'jsonwebtoken';
 import express from 'express';
 import { GraphQLServer } from 'graphql-yoga';
-import { HOST, PORT } from './config';
+import { HOST, PORT, IN_PRODUCTION } from './config';
 
 const typeDefs = `
 
@@ -71,7 +71,6 @@ const resolvers = {
         const {
           guess: { userGuesses }
         } = await UserGuess.findOne({ where: { userId }, attributes: ['guess'] });
-        // console.log(userGuesses);
         return userGuesses;
       }
       return null;
@@ -85,8 +84,12 @@ const resolvers = {
   },
   Mutation: {
     register: async (_, { username, password }, { db: { User, UserGuess } }) => {
-      const user = await User.create({ username, password });
-      await UserGuess.create({ userId: user.id });
+      try {
+        const user = await User.create({ username, password });
+        await UserGuess.create({ userId: user.id });
+      } catch (err) {
+        console.log(err);
+      }
       return [{ path: '', message: '' }];
     },
     login: async (_, { username, password }, { db: { User } }) => {
@@ -141,13 +144,15 @@ const verifyUser = async req => {
     server.express.use(express.static(path.join(__dirname, 'client/build')));
     await server.start({
       endpoint: '/graphql',
-      playground: '/graphql'
+      playground: IN_PRODUCTION ? false : '/graphql'
     });
     server.express.get('*', (_, res) => {
       res.sendFile(path.join(__dirname + '/client/build/index.html'));
     });
     console.log(`Server is running on http://${HOST}:${PORT}`);
-    console.log(`GraphQL playground is running on http://${HOST}:${PORT}/graphql`);
+    if (!IN_PRODUCTION) {
+      console.log(`GraphQL playground is running on http://${HOST}:${PORT}/graphql`);
+    }
   } catch (err) {
     console.error(err);
   }
