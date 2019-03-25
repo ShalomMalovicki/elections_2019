@@ -76,6 +76,7 @@ const resolvers = {
       return null;
     },
     getUsersGuesses: async (_, __, { db: { User, UserGuess } }) => {
+      // TODO: add to the query { attributes: ['username', 'guess'] }
       const usersGuesses = await UserGuess.findAll({ include: [User] });
       return usersGuesses.map(({ dataValues: { user: { username }, guess: { userGuesses } } }) => {
         return { username, userGuesses };
@@ -85,6 +86,7 @@ const resolvers = {
   Mutation: {
     register: async (_, { username, password }, { db: { User, UserGuess } }) => {
       try {
+        // TODO: fix register bug
         const user = await User.create({ username, password });
         await UserGuess.create({ userId: user.id });
       } catch (err) {
