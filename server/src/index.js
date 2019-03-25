@@ -120,7 +120,7 @@ const resolvers = {
 
 const verifyUser = async req => {
   if (!req.headers.authorization) return req.next();
-  const token = req.headers.authorization.split(' ')[1];
+  const [,token] = req.headers.authorization.split(' ');
   try {
     const { userId } = await jwt.verify(token, publicKey, signOptions);
     req.userId = userId;
